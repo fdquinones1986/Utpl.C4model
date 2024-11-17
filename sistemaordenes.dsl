@@ -1,16 +1,17 @@
-workspace "Plataforma de gestion de ordenes de compra" {
+workspace "Plataforma de gestion de ordenes de compras" {
 
     !identifiers hierarchical
     
-    description "Una API para gestionar órdenes de compra"
+    description "Una API para gestionar órdenes de compras"
     
     model {
         pCliente = person "Cliente Final"
-        pAdministrador = person "Administrador"
+        pEmpleado = person "Empleado del restaurante"
+        pAdministrador = person "Administrador del restaurante"
         ssOrdenes = softwareSystem "Plataforma de gestión de ordenes de compra" {
             
             appMobileCompras = container "App movil" {
-                tags "Mobile"
+                tags "Microsoft Azure - Key Vaults"
                 technology "Flutter"
                 description "Aplicativo movil "
             }
@@ -31,9 +32,9 @@ workspace "Plataforma de gestion de ordenes de compra" {
                 tags "Api"
                 technology "Python 3"
                 description "API REST para la consulta y envío de información a la base de datos"
-                securityComponent = component "Security Component" "Provides functionality related to signing in, changing passwords, etc." "Spring Bean"
-                mainframeBankingSystemFacade = component "Mainframe Banking System Facade" "A facade onto the mainframe banking system." "Spring Bean"
-                emailComponent = component "E-mail Component" "Sends e-mails to users." "Spring Bean"
+                seguridadComponent = component "Componente de Seguridad" "Provides functionality related to signing in, changing passwords, etc." "Fast Security / Python 3"
+                emailComponent = component "E-mail Component" "Envia notificaciones a los clientes" "Python Email"
+                telegramComponent = component "Telegram Component" "Envia notificaciones a los clientes por telegram" "Python Notified"
             }
             
             db = container "Base de datos" {
@@ -44,6 +45,7 @@ workspace "Plataforma de gestion de ordenes de compra" {
         pCliente -> ssOrdenes.wepAppCompras "Interactúa con la app para crear, leer, actualizar y eliminar órdenes"
         pCliente -> ssOrdenes.appMobileCompras "Interactúa con la app para crear, leer, actualizar y eliminar órdenes"
         pAdministrador -> ssOrdenes.wepAppGestion "Configura la API y monitorea su funcionamiento"
+        pEmpleado -> ssOrdenes.wepAppGestion "Consulta o actualiza órdenes de compra"
         ssOrdenes.apiCompras -> ssOrdenes.db "Lee y escribe informacion a"
         ssOrdenes.wepAppGestion -> ssOrdenes.apiCompras "Lee / escribe a " "https"
         ssOrdenes.wepAppCompras -> ssOrdenes.apiCompras "Lee / escribe a " "https"
@@ -61,7 +63,7 @@ workspace "Plataforma de gestion de ordenes de compra" {
             autolayout lr
         }
         
-        component apiCompras {
+        component ssOrdenes.apiCompras {
             include *
             autolayout lr
         }
@@ -85,7 +87,7 @@ workspace "Plataforma de gestion de ordenes de compra" {
             }
         }
         
-        theme "https://srv-si-001.utpl.edu.ec/REST_PRO_ERP/Recursos/Imagenes/themeAZ_2023.json"
+        
     }
 
     configuration {
